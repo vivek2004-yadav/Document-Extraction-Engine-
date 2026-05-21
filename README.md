@@ -1,4 +1,4 @@
-# 📊 Intelligent Document Extraction Engine (ExEngine)
+#  Intelligent Document Extraction Engine (ExEngine)
 
 A state-of-the-art Document Extraction Engine designed to parse unstructured documents (PDFs, plain text, PNG/JPG images) and transform them into clean, structured, and validated JSON data.
 
@@ -6,7 +6,7 @@ Built using a high-performance **FastAPI** backend and a premium, responsive **R
 
 ---
 
-## ✨ Features & Architecture
+##  Features & Architecture
 
 - **Unified LLM Extraction Module**: Native support for **Google Gemini** (via `google-genai` SDK) and **OpenAI** APIs.
 - **Multimodal Vision Fallback**: Automatically uploads scanned/image documents directly to LLM Vision APIs to achieve perfect structural accuracy without requiring fragile local Tesseract OCR installations on Windows.
@@ -17,7 +17,7 @@ Built using a high-performance **FastAPI** backend and a premium, responsive **R
 
 ---
 
-## 🛠️ Step-by-Step Installation & Setup
+## Step-by-Step Installation & Setup
 
 Ensure you have **Python 3.10+** and **Node.js 18+** installed.
 
@@ -45,7 +45,7 @@ GEMINI_MODEL=gemini-2.5-flash
 OPENAI_API_KEY=sk-...
 OPENAI_MODEL=gpt-4o-mini
 ```
-> 💡 *Note: You can also configure API keys dynamically in the frontend UI under "Configure LLM Key"!*
+
 
 ### 3. Startup the Services (The Easiest Way)
 We have provided a unified Windows batch script. Double-click the `run.bat` file in the root workspace folder, or run it via PowerShell:
@@ -60,7 +60,7 @@ This script will automatically:
 
 ---
 
-## 🎯 Target Schema Definitions
+##  Target Schema Definitions
 
 The extraction engine strictly validates all parsed documents against typed **Pydantic (v2)** schemas before returning:
 
@@ -96,7 +96,7 @@ The extraction engine strictly validates all parsed documents against typed **Py
 
 ---
 
-## 🤖 Prompt Engineering & Structured Outputs
+##  Prompt Engineering & Structured Outputs
 
 ### Output Integrity
 We achieve **100% Schema Adherence** by utilizing native structural JSON configurations built into the APIs:
@@ -109,7 +109,7 @@ To prevent models from filling in gaps with guesses, we inject a strict no-hallu
 
 ---
 
-## 🔍 How to Improve Accuracy & Handling Complex Documents
+##  How to Improve Accuracy & Handling Complex Documents
 
 ### What Fails with Complex/Scanned Layouts?
 1. **Scanned/Handwritten Documents**: Standard OCR text parsers (like PyPDF/pdfplumber) fail to extract text entirely, yielding empty strings.
