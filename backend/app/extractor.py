@@ -3,6 +3,11 @@ import json
 import base64
 from typing import Dict, Any, Optional, Type
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+dotenv_path = os.path.join(backend_dir, ".env")
+load_dotenv(dotenv_path=dotenv_path)
 
 from backend.app.schemas import InvoiceSchema, ResumeSchema, ContractSchema
 

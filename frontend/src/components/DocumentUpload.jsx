@@ -71,7 +71,6 @@ const DocumentUpload = ({ onUpload, isProcessing }) => {
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
         onDrop={handleDrop}
-        onClick={triggerFileInput}
       >
         <input 
           ref={fileInputRef}

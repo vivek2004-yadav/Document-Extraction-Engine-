@@ -5,6 +5,11 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Header, Depe
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, Dict, Any
+from dotenv import load_dotenv
+
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+dotenv_path = os.path.join(backend_dir, ".env")
+load_dotenv(dotenv_path=dotenv_path)
 
 from backend.app.database import (
     init_db,
