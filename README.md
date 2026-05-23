@@ -1,4 +1,4 @@
-# Document Processing & Editing App
+# Document Extraction Engine
 
 This is a full-stack web application designed to help manage and edit key details from files. Invoices, resumes, or contracts (in PDF, DOCX, TXT, or image format) can be uploaded, and the application will automatically organize the contents into clean tables.
 
@@ -27,20 +27,10 @@ Navigate to the `backend` folder and create a file named `.env`. Add the API key
 # Choose 'gemini' or 'openai'
 API_PROVIDER=gemini
 
-# Google Gemini Credentials (Recommended)
-GEMINI_API_KEY=actual_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
-
-# OpenAI Credentials (Optional)
-OPENAI_API_KEY=openai_key_here
-OPENAI_MODEL=gpt-4o-mini
-```
-
 ### 2. Launch the Application
 An automatic batch script is provided to set up the environment. Simply double-click **`run.bat`** in the main folder, or run it in a terminal:
-```powershell
 .\run.bat
-```
+
 This batch script will automatically:
 1. Create a Python virtual environment (`.venv`).
 2. Install all required Python packages.
@@ -67,9 +57,9 @@ This details how the project files work together:
 
 5. **`backend/app/main.py` (API Routes):**
    Defines the endpoints for frontend communication:
-   - `POST /api/extract` for uploads.
-   - `GET /api/extractions` to load sidebar history.
-   - `PUT /api/extractions/{id}` to save manual cell corrections.
+   - POST /api/extract for uploads.
+   - GET /api/extractions to load sidebar history.
+   - PUT /api/extractions/{id} to save manual cell corrections.
 
 ---
 
