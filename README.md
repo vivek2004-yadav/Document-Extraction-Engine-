@@ -1,70 +1,62 @@
 # Document Extraction Engine
 
-This is a full-stack web application designed to help manage and edit key details from files. Invoices, resumes, or contracts (in PDF, DOCX, TXT, or image format) can be uploaded, and the application will automatically organize the contents into clean tables.
+This is a full-stack document intelligence application. It allows uploading unstructured documents (invoices, resumes, and contracts) as PDFs, Word files, plain text, or raw images, and automatically organizes their data fields into structured, interactive tables. 
 
-It includes a **React** frontend styled with clean borders, a **FastAPI** backend, and a local **SQLite** database to keep a history of all uploads and edits.
-
----
-
-## What this App Does
-
-- **File Parsing:** It reads standard text files, Word docs, and clear PDFs directly.
-- **Image Fallback:** If an image (PNG/JPG) or a scanned document is uploaded, the file is sent directly to Gemini's visual API to accurately read the coordinates and tables.
-- **Manual Auditing & Editing:** If the system gets a field wrong or leaves it empty, cells in the table can be double-clicked to edit the value manually, saving changes directly to the database.
-- **Verification Tags:** Fields are highlighted with simple labels like **Verified**, **Review**, or **Unverified** to indicate what needs manual checking.
-- **Local History Log:** Every processed file is saved in a local SQLite file (`backend/extractions.db`), which can be loaded at any time from the sidebar.
-- **Exporting Options:** The completed tables can be downloaded as clean **CSV** files or raw **JSON** configurations at the click of a button.
+The application is fully audited, meaning any extracted value can be edited directly inside the UI, and changes are instantly saved to a local database.
 
 ---
 
-## How to Set It Up
+## Key Capabilities
 
-Make sure **Python 3.10+** and **Node.js 18+** are installed on the host system.
+* **Multi-Format Text Parser**: Directly extracts text from clear PDFs, DOCX files, and plain text documents.
+* **Intelligent OCR Fallback**: If a document is scanned, blank, or uploaded as an image (PNG/JPG), it automatically bypasses standard parsing and streams the raw bytes directly to Gemini's visual model to analyze tables and layouts.
+* **Interactive Editing**: Double-click any cell in the UI to correct values, update numbers, or refine descriptions instantly.
+* **Confidence Scoring**: Every extracted field is tagged with a **High**, **Medium**, or **Low** indicator, letting you quickly spot which fields require review.
+* **SQLite Persistence**: All processed uploads, original texts, and manual edits are recorded locally in a database so you can reload your work anytime.
+* **Dual-Format Export**: Download your completed data tables as clean CSV files or raw JSON schemas.
 
-### 1. Configure the Backend
-Navigate to the `backend` folder and create a file named `.env`. Add the API keys there:
+---
+
+## Project Architecture
+
+The codebase is split into two independent services to ensure high responsiveness.
+
+### 1. The React Frontend (`frontend/src/`)
+Designed as a modern single-page dashboard with glassmorphic borders and smooth transitions:
+
+* **`App.jsx`**: Coordinates the global client state, coordinates uploads to the API, handles browser-side settings, and handles routing between components.
+* **`components/DocumentUpload.jsx`**: A drag-and-drop file interface with built-in format checkers (validating files up to 10MB).
+* **`components/ExtractionsList.jsx`**: The left sidebar showing your historical records, complete with visual status lights (Ready vs. Error) and document category tags.
+* **`components/ExtractionResult.jsx`**: The core results panel. It renders standard input fields for single attributes, handles dynamic grid editors for nested tables (like line items or work history), and houses the CSV/JSON download widgets.
+* **`components/Loader.jsx`**: A rotating, minimal loading spinner that plays during processing.
+* **`index.css`**: Holds all customized light-mode styles, scrollbars, confidence badges (emerald for high, amber for medium, ruby for low), and micro-animations.
+
+### 2. The Python Backend (`backend/app/`)
+A fast, typed API layer built on top of FastAPI and Pydantic:
+
+* **`main.py`**: Declares API routes (extractions, lists, manual updates), handles temporary directory buffering, and manages CORS settings.
+* **`extractor.py`**: Integrates with LLMs (Google Gemini and OpenAI) with strict temperature control to prevent guesswork. If a field is missing in the document, it safely returns `null` along with an explanation note.
+* **`schemas.py`**: Defines standard schemas for **Invoices**, **Resumes**, and **Contracts** using Pydantic, acting as the structural blueprint for LLM outputs.
+* **`parser.py`**: Determines file types and extracts raw string lines. It also detects if a PDF is scanned (less than 50 characters of readable text) and flags it for image analysis.
+* **`database.py`**: Manages the local SQLite database (`extractions.db`), handles table migrations, and records updates.
+
+---
+
+## Quick Start
+
+### 1. Set Up the Backend Configuration
+Inside the `backend/` folder, create a file named `.env` and add your API keys:
+
 ```env
-# Choose 'gemini' or 'openai'
 API_PROVIDER=gemini
 
 ### 2. Launch the Application
-An automatic batch script is provided to set up the environment. Simply double-click **`run.bat`** in the main folder, or run it in a terminal:
+Double-click the automatic **`run.bat`** script in the root directory, or execute it in your terminal:
+
+```powershell
 .\run.bat
+```
 
-This batch script will automatically:
-1. Create a Python virtual environment (`.venv`).
-2. Install all required Python packages.
-3. Boot up the FastAPI server on `http://localhost:8000`.
-4. Boot up the Vite-React development server on `http://localhost:5173`.
-
----
-
-## Under the Hood: Code Architecture
-
-This details how the project files work together:
-
-1. **`backend/app/schemas.py` (Validation):**
-   Defines the exact structures of the documents (Invoice, Resume, and Contract). Every field holds a value, an audit status tag, and a source note explaining where it was found or why it is empty.
-
-2. **`backend/app/parser.py` (File Reading):**
-   Handles standard file types using local libraries. If a PDF has no selectable text (scanned page) or is a raw image file, the document is flagged as visual to trigger visual parsing.
-
-3. **`backend/app/extractor.py` (Field Parsing):**
-   Formats the prompt and forwards it to the provider. It uses Gemini's native `response_schema` feature to guarantee that the output matches the exact Pydantic types.
-
-4. **`backend/app/database.py` (Local Persistence):**
-   Creates a standard SQLite database (`extractions.db`) on startup. It saves the original file name, document type, raw text, structured JSON data, and handles saving manual inline corrections.
-
-5. **`backend/app/main.py` (API Routes):**
-   Defines the endpoints for frontend communication:
-   - POST /api/extract for uploads.
-   - GET /api/extractions to load sidebar history.
-   - PUT /api/extractions/{id} to save manual cell corrections.
-
----
-
-## Technical Features Built-In
-
-- **No Guessed Data:** System instructions strictly forbid the AI from guessing missing values. If a field is missing, it returns a safe `null` value with a note.
-- **Decoupled Setup:** Separating the frontend and backend ensures the user interface stays highly responsive even during heavy document analysis.
-- **Client-Side API Storage:** Any keys entered in the dashboard are stored securely in the browser's local storage (`localStorage`) and are never saved on the server.
+This script will set up a Python virtual environment, install all requirements, and launch both services:
+* **Frontend Dashboard**: `http://localhost:5173`
+* **Backend API Docs**: `http://localhost:8000/docs`
